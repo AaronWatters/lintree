@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>lintree example</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: Arial, sans-serif;
+        background: #fafafa;
+      }
+
+      #chart {
+        max-width: 960px;
+        margin: 0 auto;
+        border: 1px solid #d0d0d0;
+        background: #fff;
+      }
+
+      .lineage-chart-svg {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Lineage chart example</h1>
+    <div id="chart"></div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="./lineage_chart.js"></script>
+    <script>
+      const chartData = {
+        width: 920,
+        cells: {
+          A: { timestamp: 0, color: "#1f77b4" },
+          B: { timestamp: 1, parent: "A", color: "#ff7f0e" },
+          C: { timestamp: 1, parent: "A", color: "#2ca02c" },
+          D: { timestamp: 2, parent: "B", color: "#d62728" },
+          E: { timestamp: 2, parent: "B", color: "#9467bd" },
+          F: { timestamp: 2, parent: "C", color: "#8c564b" },
+          G: { timestamp: 3, parent: "D", color: "#e377c2" },
+          H: { timestamp: 3, parent: "E", color: "#7f7f7f" },
+          I: { timestamp: 3, parent: "F", color: "#bcbd22" },
+          J: { timestamp: 4, parent: "I", color: "#17becf" },
+          K: { timestamp: 4, parent: "I", color: "#ff9896" },
+          L: { timestamp: 4, parent: "G", color: "#98df8a" }
+        }
+      };
+
+      const container = document.getElementById("chart");
+      const chart = new LineageChart(container);
+      chart.load(chartData);
+    </script>
+  </body>
+</html>

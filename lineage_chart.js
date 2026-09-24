@@ -238,13 +238,19 @@
     if (!isFinite(cellWidth) || cellWidth < 8) {
       cellWidth = Math.min(MAX_CELL_RECT_WIDTH, Math.max(8, Math.floor(innerWidth / 4)));
     }
+    cellWidth = Math.min(cellWidth, innerWidth);
 
     var domainMax = Math.max(leafCount - 1, 0);
+    var minCenterX = HORIZONTAL_MARGIN + cellWidth / 2;
+    var maxCenterX = chartWidth - HORIZONTAL_MARGIN - cellWidth / 2;
     var scaleX = function (unitX) {
-      if (domainMax === 0) {
+      if (maxCenterX <= minCenterX) {
         return chartWidth / 2;
       }
-      return HORIZONTAL_MARGIN + (unitX / domainMax) * innerWidth;
+      if (domainMax === 0) {
+        return (minCenterX + maxCenterX) / 2;
+      }
+      return minCenterX + (unitX / domainMax) * (maxCenterX - minCenterX);
     };
 
     var chartCells = ids.map(

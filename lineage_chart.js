@@ -14,6 +14,13 @@
   var CELL_HEIGHT = 30;
   var CELL_SPACING = 10;
   var HORIZONTAL_MARGIN = 20;
+  var TOOLTIP_BACKGROUND_COLOR = "rgba(0, 0, 0, 0.8)";
+  var TOOLTIP_TEXT_COLOR = "#fff";
+  var TIMESTAMP_BAND_EVEN_COLOR = "#f2f2f2";
+  var TIMESTAMP_BAND_ODD_COLOR = "#ffffff";
+  var TIMESTAMP_BAND_HOVER_COLOR = "cornsilk";
+  var LINK_STROKE_COLOR = "#444";
+  var CELL_STROKE_COLOR = "#222";
 
   function LineageCell(identityString, timestamp, defaultColor, parentId) {
     this.identityString = identityString;
@@ -57,8 +64,8 @@
       .style("pointer-events", "none")
       .style("padding", "4px 8px")
       .style("font-size", "12px")
-      .style("background", "rgba(0, 0, 0, 0.8)")
-      .style("color", "#fff")
+      .style("background", TOOLTIP_BACKGROUND_COLOR)
+      .style("color", TOOLTIP_TEXT_COLOR)
       .style("border-radius", "4px")
       .style("opacity", 0);
   }
@@ -209,7 +216,11 @@
     this.svg.attr("width", chartWidth).attr("height", chartHeight);
     this.svg.selectAll("*").remove();
 
-    this.svg
+    var timestampBandFill = function (idx) {
+      return idx % 2 === 0 ? TIMESTAMP_BAND_EVEN_COLOR : TIMESTAMP_BAND_ODD_COLOR;
+    };
+
+    var timestampBands = this.svg
       .selectAll("rect.timestamp-band")
       .data(timestamps)
       .enter()
@@ -222,7 +233,7 @@
       .attr("width", chartWidth)
       .attr("height", TIMESTAMP_HEIGHT)
       .attr("fill", function (d, idx) {
-        return idx % 2 === 0 ? "#f2f2f2" : "#ffffff";
+        return timestampBandFill(idx);
       });
 
     var leafCount = Math.max(currentX, 1);
@@ -295,7 +306,7 @@
       .attr("y2", function (d) {
         return cellTopY(d.child);
       })
-      .attr("stroke", "#444")
+      .attr("stroke", LINK_STROKE_COLOR)
       .attr("stroke-width", 2);
 
     var self = this;
@@ -316,9 +327,12 @@
       .attr("fill", function (d) {
         return d.color;
       })
-      .attr("stroke", "#222")
+      .attr("stroke", CELL_STROKE_COLOR)
       .attr("stroke-width", 1)
       .on("mouseover", function (event, d) {
+        timestampBands.attr("fill", function (timestamp, idx) {
+          return timestamp === d.timestamp ? TIMESTAMP_BAND_HOVER_COLOR : timestampBandFill(idx);
+        });
         self.tooltip
           .style("opacity", 1)
           .text("t=" + d.timestamp + " id=" + d.identityString);
@@ -330,6 +344,9 @@
           .style("top", event.clientY - rect.top + 8 + "px");
       })
       .on("mouseout", function () {
+        timestampBands.attr("fill", function (timestamp, idx) {
+          return timestampBandFill(idx);
+        });
         self.tooltip.style("opacity", 0);
       })
       .on("click", function (event, d) {

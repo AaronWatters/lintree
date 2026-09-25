@@ -46,6 +46,7 @@
 
     this.container = containerDomElement;
     this.cells = {};
+    this.jsonData = null;
     this.clickCallback = null;
 
     if (window.getComputedStyle(this.container).position === "static") {
@@ -82,6 +83,7 @@
     if (!jsonData || typeof jsonData !== "object") {
       throw new Error("load(jsonData) requires an object.");
     }
+    this.jsonData = jsonData;
     var inputCells = jsonData.cells || {};
     var selectedTimestamp = jsonData.selectedTimestamp;
     this.cells = {};

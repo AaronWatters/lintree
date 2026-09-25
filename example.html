@@ -22,33 +22,64 @@
       .lineage-chart-svg {
         display: block;
       }
+
+      .controls {
+        max-width: 960px;
+        margin: 0 auto 12px auto;
+        display: flex;
+        gap: 8px;
+      }
     </style>
   </head>
   <body>
     <h1>Lineage chart example</h1>
+    <div class="controls">
+      <button id="load-large" type="button">Load larger spec</button>
+      <button id="load-small" type="button">Load smaller spec</button>
+    </div>
     <div id="chart"></div>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="./lineage_chart.js"></script>
     <script>
-      const chartData = {
-        width: 920,
-        selectedTimestamp: 2,
-        cells: {
-          A: { timestamp: 0, color: "#1f77b4" },
-          B: { timestamp: 1, parent: "A", color: "#ff7f0e" },
-          C: { timestamp: 1, parent: "A", color: "#2ca02c" },
-          D: { timestamp: 2, parent: "B", color: "#d62728" },
-          E: { timestamp: 2, parent: "B", color: "#9467bd" },
-          F: { timestamp: 2, parent: "C", color: "#8c564b" },
-          G: { timestamp: 3, parent: "D", color: "#e377c2" },
-          H: { timestamp: 3, parent: "E", color: "#7f7f7f" },
-          I: { timestamp: 3, parent: "F", color: "#bcbd22" },
-          J: { timestamp: 4, parent: "I", color: "#17becf" },
-          K: { timestamp: 4, parent: "I", color: "#ff9896" },
-          L: { timestamp: 4, parent: "G", color: "#98df8a" }
-        }
-      };
+      function getLargeSpec() {
+        return {
+          width: 920,
+          cells: {
+            A: { timestamp: 0, color: "#1f77b4" },
+            B: { timestamp: 1, parent: "A", color: "#ff7f0e" },
+            C: { timestamp: 1, parent: "A", color: "#2ca02c" },
+            D: { timestamp: 2, parent: "B", color: "#d62728" },
+            E: { timestamp: 2, parent: "B", color: "#9467bd" },
+            F: { timestamp: 2, parent: "C", color: "#8c564b" },
+            G: { timestamp: 3, parent: "D", color: "#e377c2" },
+            H: { timestamp: 3, parent: "E", color: "#7f7f7f" },
+            I: { timestamp: 3, parent: "F", color: "#bcbd22" },
+            J: { timestamp: 4, parent: "I", color: "#17becf" },
+            K: { timestamp: 4, parent: "I", color: "#ff9896" },
+            L: { timestamp: 4, parent: "G", color: "#98df8a" }
+          }
+        };
+      }
+
+      function getSmallSpec() {
+        return {
+          width: 920,
+          selectedTimestamp: 1,
+          cells: {
+            A: { timestamp: 0, color: "#1f77b4" },
+            B: { timestamp: 1, parent: "A", color: "#ff7f0e" },
+            C: { timestamp: 1, parent: "A", color: "#2ca02c" },
+            D: { timestamp: 2, parent: "B", color: "#d62728" },
+            E: { timestamp: 2, parent: "C", color: "#9467bd" },
+            F: { timestamp: 3, parent: "D", color: "#8c564b" }
+          }
+        };
+      }
+
+      function loadSpec(specFactory) {
+        chart.load(specFactory());
+      }
 
       const container = document.getElementById("chart");
       const chart = new LineageChart(container);
@@ -56,7 +87,17 @@
         chart.jsonData.selectedTimestamp = timestamp;
         chart.load(chart.jsonData);
       });
-      chart.load(chartData);
+      document
+        .getElementById("load-large")
+        .addEventListener("click", function () {
+          loadSpec(getLargeSpec);
+        });
+      document
+        .getElementById("load-small")
+        .addEventListener("click", function () {
+          loadSpec(getSmallSpec);
+        });
+      loadSpec(getLargeSpec);
     </script>
   </body>
 </html>

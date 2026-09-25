@@ -83,6 +83,7 @@
       throw new Error("load(jsonData) requires an object.");
     }
     var inputCells = jsonData.cells || {};
+    var selectedTimestamp = jsonData.selectedTimestamp;
     this.cells = {};
 
     var ids = Object.keys(inputCells).sort();
@@ -234,6 +235,12 @@
       .attr("height", TIMESTAMP_HEIGHT)
       .attr("fill", function (d, idx) {
         return timestampBandFill(idx);
+      })
+      .attr("stroke", function (d) {
+        return d === selectedTimestamp ? "red" : "none";
+      })
+      .attr("stroke-width", function (d) {
+        return d === selectedTimestamp ? 3 : 0;
       });
 
     var leafCount = Math.max(currentX, 1);
